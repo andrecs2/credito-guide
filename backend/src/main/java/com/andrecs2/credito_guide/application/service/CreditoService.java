@@ -1,27 +1,31 @@
 package com.andrecs2.credito_guide.application.service;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import com.andrecs2.credito_guide.application.ports.repository.CreditoRepositoryAdapter;
 import com.andrecs2.credito_guide.application.ports.service.CreditoServiceAdapter;
 import com.andrecs2.credito_guide.infra.response.CreditoResponse;
-import com.andrecs2.credito_guide.util.LeitorJson;
+
 @Service
 public class CreditoService implements CreditoServiceAdapter {
 
+	@Autowired
+	private CreditoRepositoryAdapter repositoryAdapter;
 
 	@Override
-	public List<CreditoResponse> findByNumeroNfse(String numeroNfse) {
-		CreditoResponse credito = LeitorJson.getMock();
-		return Arrays.asList(credito);
+	public Page<CreditoResponse> findByNumeroNfse(String numeroNfse) {
+
+		return repositoryAdapter.findByNumeroNfse(numeroNfse);
+
 	}
 
 	@Override
-	public CreditoResponse findByNumeroCredito(String numeroCredito) {
-		CreditoResponse credito = LeitorJson.getMock();
-		return credito;
+	public Optional<CreditoResponse> findByNumeroCredito(String numeroCredito) {
+		return repositoryAdapter.findByNumeroCredito(numeroCredito);
 	}
 
 }

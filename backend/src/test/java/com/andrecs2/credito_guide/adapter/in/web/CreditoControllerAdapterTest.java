@@ -33,11 +33,11 @@ class CreditoControllerAdapterTest {
 		mockMvc.perform(get("/api/creditos/7891011")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$[0].numeroCredito").value(creditoMock.getNumeroCredito()))
-				.andExpect(jsonPath("$[0].numeroNfse").value(creditoMock.getNumeroNfse()))
-				.andExpect(jsonPath("$[0].simplesNacional").value(creditoMock.getSimplesNacional()))
-				.andExpect(jsonPath("$[0].aliquota").value(creditoMock.getAliquota()))
-				.andExpect(jsonPath("$[0].valorIssqn").value(creditoMock.getValorIssqn()));
+				.andExpect(jsonPath("$.content.[0].numeroCredito").value(creditoMock.getNumeroCredito()))
+				.andExpect(jsonPath("$.content.[0].numeroNfse").value(creditoMock.getNumeroNfse()))
+				.andExpect(jsonPath("$.content.[0].simplesNacional").value(creditoMock.getSimplesNacional()))
+				.andExpect(jsonPath("$.content.[0].aliquota").value(creditoMock.getAliquota()))
+				.andExpect(jsonPath("$.content.[0].valorIssqn").value(creditoMock.getValorIssqn()));
 	}
 
 	@Test
