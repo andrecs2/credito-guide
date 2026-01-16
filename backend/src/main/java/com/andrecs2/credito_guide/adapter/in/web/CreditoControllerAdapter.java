@@ -1,8 +1,6 @@
 package com.andrecs2.credito_guide.adapter.in.web;
 
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -38,14 +36,16 @@ public class CreditoControllerAdapter {
             @PathVariable String numeroNfse) {
 
         Page<CreditoResponse> creditos = adapter.findByNumeroNfse(numeroNfse);
+ 
         return ResponseEntity.ok(creditos);
     }
 
     @GetMapping(value = "/credito/{numeroCredito}", produces = "application/json")
     @Operation(summary = "Consultar crédito por número do crédito")
-    public ResponseEntity<Optional<CreditoResponse>> consultarPorNumeroCredito(
+    public ResponseEntity<CreditoResponse> consultarPorNumeroCredito(
             @Parameter(description = "Número do crédito", required = true) @PathVariable String numeroCredito) {
-        Optional<CreditoResponse> credito = adapter.findByNumeroCredito(numeroCredito);
-        return ResponseEntity.ok(credito);
+    	 return adapter.findByNumeroCredito(numeroCredito)
+                 .map(ResponseEntity::ok)
+                 .orElse(ResponseEntity.notFound().build());
     }
 }
