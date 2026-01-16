@@ -1,8 +1,12 @@
 package com.andrecs2.credito_guide.adapter.in.web;
 
-import java.util.Arrays;
+
+import com.andrecs2.credito_guide.application.ports.service.CreditoServiceAdapter;
+import com.andrecs2.credito_guide.infra.response.CreditoResponse;
+
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,27 +25,27 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 public class CreditoControllerAdapter {
 
+
+	@Autowired
+	private CreditoServiceAdapter adapter;
+
     String retorno = "primeiro_teste";
 
     @GetMapping(value = "/{numeroNfse}", produces = "application/json")
     @Operation(summary = "Consultar créditos por número da NFS-e")
-
-    public ResponseEntity<List<String>> consultarPorNfse(
+    public ResponseEntity<List<CreditoResponse>> consultarPorNfse(
             @Parameter(description = "Número da NFS-e", required = true, example = "7891011")
-
             @PathVariable String numeroNfse) {
 
-        List<String> teste = Arrays.asList(new String[] { retorno });
-
-        return ResponseEntity.ok(teste);
+        List<CreditoResponse> creditos = adapter.findByNumeroNfse(numeroNfse);
+        return ResponseEntity.ok(creditos);
     }
 
     @GetMapping(value = "/credito/{numeroCredito}", produces = "application/json")
     @Operation(summary = "Consultar crédito por número do crédito")
-
-    public ResponseEntity<String> consultarPorNumeroCredito(
+    public ResponseEntity<CreditoResponse> consultarPorNumeroCredito(
             @Parameter(description = "Número do crédito", required = true) @PathVariable String numeroCredito) {
-
-        return ResponseEntity.ok(retorno);
+        CreditoResponse credito = adapter.findByNumeroCredito(numeroCredito);
+        return ResponseEntity.ok(credito);
     }
 }
