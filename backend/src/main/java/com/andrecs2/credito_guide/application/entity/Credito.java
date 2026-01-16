@@ -49,8 +49,10 @@ public class Credito implements Serializable {
 	
 	@Column(name = "valor_faturado", precision = 15, scale = 2, nullable = false)
 	private BigDecimal valorFaturado;
+	
 	@Column(name = "valor_deducao", precision = 15, scale = 2, nullable = false)
 	private BigDecimal valorDeducao;
+	
 	@Column(name = "base_calculo", precision = 15, scale = 2, nullable = false)
 	private BigDecimal baseCalculo;
 
