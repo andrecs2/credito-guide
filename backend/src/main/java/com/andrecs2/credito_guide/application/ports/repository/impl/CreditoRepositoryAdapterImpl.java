@@ -1,7 +1,6 @@
 package com.andrecs2.credito_guide.application.ports.repository.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +18,7 @@ import com.andrecs2.credito_guide.adapter.converter.CreditoConverter;
 import com.andrecs2.credito_guide.application.entity.Credito;
 import com.andrecs2.credito_guide.application.ports.repository.CreditoRepositoryAdapter;
 import com.andrecs2.credito_guide.application.ports.repository.jpa.CreditoRepository;
+import com.andrecs2.credito_guide.domain.exception.CreditoNotFoundException;
 import com.andrecs2.credito_guide.infra.response.CreditoResponse;
 
 import jakarta.persistence.criteria.Predicate;
@@ -37,7 +37,11 @@ public class CreditoRepositoryAdapterImpl implements CreditoRepositoryAdapter {
 	
 	@Override
 	public Optional<CreditoResponse> findByNumeroCredito(String numeroCredito) {
-		return Optional.of(converter.toResponse(repository.findByNumeroCredito(numeroCredito)));
+		Optional<Credito> credito = repository.findByNumeroCredito(numeroCredito);
+		if(credito.isEmpty()){
+			throw CreditoNotFoundException.byNumeroCredito(numeroCredito);
+		}
+		return Optional.of(converter.toResponse(credito));
 	}
 
 	@Override
@@ -47,11 +51,12 @@ public class CreditoRepositoryAdapterImpl implements CreditoRepositoryAdapter {
 			predicates.add(builder.equal(root.get("numeroNfse"), numeroNfse));
 
 			return builder.and(predicates.toArray(new Predicate[0]));
-		}, PageRequest.of(10, 20)));
+		}, PageRequest.of(0, 50)));
 	}
 
 	
 	protected Page<CreditoResponse> toList(Page<Credito> all) {
+		System.out.println("CreditoRepositoryAdapterImpl.toList()"+all.getSize());
 		List<CreditoResponse> list = Collections.emptyList();
 		int number = 0;
 		int size = 10;
