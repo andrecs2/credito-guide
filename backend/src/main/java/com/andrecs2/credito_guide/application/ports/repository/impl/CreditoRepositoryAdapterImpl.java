@@ -1,7 +1,6 @@
 package com.andrecs2.credito_guide.application.ports.repository.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +18,7 @@ import com.andrecs2.credito_guide.adapter.converter.CreditoConverter;
 import com.andrecs2.credito_guide.application.entity.Credito;
 import com.andrecs2.credito_guide.application.ports.repository.CreditoRepositoryAdapter;
 import com.andrecs2.credito_guide.application.ports.repository.jpa.CreditoRepository;
+import com.andrecs2.credito_guide.domain.exception.CreditoNotFoundException;
 import com.andrecs2.credito_guide.infra.response.CreditoResponse;
 
 import jakarta.persistence.criteria.Predicate;
@@ -37,37 +37,24 @@ public class CreditoRepositoryAdapterImpl implements CreditoRepositoryAdapter {
 	
 	@Override
 	public Optional<CreditoResponse> findByNumeroCredito(String numeroCredito) {
-		return Optional.of(converter.toResponse(repository.findByNumeroCredito(numeroCredito)));
+		Optional<Credito> credito = repository.findByNumeroCredito(numeroCredito);
+		if(credito.isEmpty()){
+			throw CreditoNotFoundException.byNumeroCredito(numeroCredito);
+		}
+		return Optional.of(converter.toResponse(credito));
 	}
 
 	@Override
-	public Page<CreditoResponse> findByNumeroNfse(String numeroNfse) {
-		return toList(repository.findAll((Specification<Credito>) (root, query, builder) -> {
+	public List<CreditoResponse> findByNumeroNfse(String numeroNfse) {
+		return repository.findAll((Specification<Credito>) (root, query, builder) -> {
 			List<Predicate> predicates = new ArrayList<>();
 			predicates.add(builder.equal(root.get("numeroNfse"), numeroNfse));
 
 			return builder.and(predicates.toArray(new Predicate[0]));
-		}, PageRequest.of(10, 20)));
+		}, PageRequest.of(0, 50)).getContent().stream().map(converter::toResponse)
+				.collect(Collectors.toList());
 	}
 
 	
-	protected Page<CreditoResponse> toList(Page<Credito> all) {
-		List<CreditoResponse> list = Collections.emptyList();
-		int number = 0;
-		int size = 10;
-		Sort sort = null;
-		long total = 0;
-		if (all != null) {
-			list = all.getContent()
-					.stream()
-					.map(converter::toResponse)
-					.collect(Collectors.toList());
-
-			number = all.getNumber();
-			size = all.getSize();
-			sort = all.getSort();
-			total = all.getTotalElements();
-		}
-		return new PageImpl<CreditoResponse>(list, PageRequest.of(number, size, sort), total);
-	}
+	
 }

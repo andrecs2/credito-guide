@@ -1,0 +1,63 @@
+<main class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <header class="mb-4 text-center">
+        <div class="d-flex align-items-center justify-content-center mb-3">
+          <div class="bg-primary rounded-circle p-3 me-3">
+            <i class="bi bi-cash-coin text-white fs-1"></i>
+          </div>
+          <div class="text-start">
+            <h1 class="display-5 fw-bold text-primary mb-1">Sistema de Créditos Fiscais</h1>
+            <p class="lead text-muted mb-0">Consulta e Gerenciamento de Créditos de NFS-e</p>
+          </div>
+        </div>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-white rounded-3 shadow-sm mb-4">
+          <div class="container-fluid">
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                  <a class="nav-link active" routerLink="/" routerLinkActive="active">
+                    <i class="bi bi-house-door me-1"></i>Início
+                  </a>
+                </li>
+
+              </ul>
+              <div class="d-flex align-items-center">
+                <span class="me-3 text-muted">
+                  <i class="bi bi-calendar3 me-1"></i>{{ getDataAtual() }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+      <section>
+        <router-outlet></router-outlet>
+      </section>
+
+      <footer class="mt-5 pt-4 border-top">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <h5 class="text-primary">
+              <i class="bi bi-info-circle me-2"></i>Sobre o Sistema
+            </h5>
+            <p class="text-muted small">
+              Sistema desenvolvido para consulta e gerenciamento de créditos fiscais gerados a partir de Notas Fiscais
+              de Serviços Eletrônicos (NFS-e).
+            </p>
+          </div>
+
+        </div>
+        <div class="row mt-3">
+          <div class="col-12 text-center">
+            <p class="text-muted small mb-0">
+              © 2024 Sistema de Créditos Fiscais. Todos os direitos reservados.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+</main>

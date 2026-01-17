@@ -7,6 +7,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 import com.andrecs2.credito_guide.application.ports.repository.CreditoRepositoryAdapter;
 import com.andrecs2.credito_guide.application.service.CreditoService;
@@ -43,15 +44,19 @@ class CreditoServiceAdapterImplTest {
                 .valorFaturado(new BigDecimal("150.00").doubleValue())
                 .build();
 
-        Page<CreditoResponse> page = new PageImpl<>(List.of(response));
+		List<CreditoResponse> page = new ArrayList<CreditoResponse>() {
+			{
+				add(response);
+			}
+		};
 
         when(repository.findByNumeroNfse(nfse)).thenReturn(page);
 
-        Page<CreditoResponse> resultado = service.findByNumeroNfse(nfse);
+        List<CreditoResponse> resultado = service.findByNumeroNfse(nfse);
 
         assertFalse(resultado.isEmpty());
-        assertEquals(1, resultado.getTotalElements());
-        assertEquals("123456", resultado.getContent().get(0).getNumeroCredito());
+        assertEquals(1, resultado.size());
+        assertEquals("123456", resultado.get(0).getNumeroCredito());
 
         verify(repository).findByNumeroNfse(nfse);
     }
@@ -61,9 +66,9 @@ class CreditoServiceAdapterImplTest {
     void deveRetornarPaginaVaziaQuandoNfseNaoExistir() {
         String nfse = "000000";
 
-        when(repository.findByNumeroNfse(nfse)).thenReturn(Page.empty());
+        when(repository.findByNumeroNfse(nfse)).thenReturn(Collections.emptyList());
 
-        Page<CreditoResponse> resultado = service.findByNumeroNfse(nfse);
+        List<CreditoResponse> resultado = service.findByNumeroNfse(nfse);
 
         assertTrue(resultado.isEmpty());
         verify(repository).findByNumeroNfse(nfse);

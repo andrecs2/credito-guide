@@ -1,0 +1,302 @@
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+
+      <div *ngIf="connectionStatus" class="alert alert-info alert-dismissible fade show mb-3" role="alert">
+        <i class="bi bi-wifi me-2"></i>
+        Status da API: <strong>{{ connectionStatus.connected ? 'Conectado' : 'Desconectado' }}</strong>
+        <button type="button" class="btn-close" (click)="connectionStatus = null"></button>
+      </div>
+
+      <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary-gradient text-white py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <h2 class="h4 mb-0">
+              <i class="bi bi-search me-2"></i>Consulta de Créditos
+            </h2>
+          </div>
+        </div>
+
+        <div class="card-body p-4">
+
+          <div class="row mb-4">
+            <div class="col-md-8 col-lg-6">
+              <div class="btn-group w-100 shadow-sm" role="group" aria-label="Modo de consulta">
+                <button type="button" class="btn py-2" [class.btn-primary]="modoConsulta === 'nfse'"
+                  [class.btn-outline-primary]="modoConsulta !== 'nfse'" (click)="setModoConsulta('nfse')">
+                  <i class="bi bi-file-text me-2"></i>Por NFS-e
+                </button>
+                <button type="button" class="btn py-2" [class.btn-primary]="modoConsulta === 'credito'"
+                  [class.btn-outline-primary]="modoConsulta !== 'credito'" (click)="setModoConsulta('credito')">
+                  <i class="bi bi-credit-card me-2"></i>Por Crédito
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <form [formGroup]="consultaForm" (ngSubmit)="consultar()" class="mb-4">
+            <div class="row g-3 align-items-end">
+
+              <div class="col-md-8 col-lg-6" *ngIf="modoConsulta === 'nfse'">
+                <label for="numeroNfse" class="form-label fw-bold text-primary">
+                  <i class="bi bi-hash me-1"></i>Número da NFS-e
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light">
+                    <i class="bi bi-file-earmark-text text-primary"></i>
+                  </span>
+                  <input type="text" class="form-control form-control-lg" id="numeroNfse" formControlName="numeroNfse"
+                    placeholder="Ex: NFSE20240001"
+                    [class.is-invalid]="numeroNfseControl?.invalid && (numeroNfseControl?.dirty || numeroNfseControl?.touched)">
+                </div>
+                <div *ngIf="numeroNfseControl?.invalid && (numeroNfseControl?.dirty || numeroNfseControl?.touched)"
+                  class="mt-1">
+                  <small class="text-danger">
+                    <i class="bi bi-exclamation-circle me-1"></i>
+                    <span *ngIf="numeroNfseControl?.errors?.['required']">
+                      Número da NFS-e é obrigatório
+                    </span>
+                    <span *ngIf="numeroNfseControl?.errors?.['minlength']">
+                      Mínimo de {{ numeroNfseControl?.errors?.['minlength']?.requiredLength }} caracteres
+                    </span>
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-md-8 col-lg-6" *ngIf="modoConsulta === 'credito'">
+                <label for="numeroCredito" class="form-label fw-bold text-primary">
+                  <i class="bi bi-hash me-1"></i>Número do Crédito
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light">
+                    <i class="bi bi-credit-card text-primary"></i>
+                  </span>
+                  <input type="text" class="form-control form-control-lg" id="numeroCredito"
+                    formControlName="numeroCredito" placeholder="Ex: CRED20240001"
+                    [class.is-invalid]="numeroCreditoControl?.invalid && (numeroCreditoControl?.dirty || numeroCreditoControl?.touched)">
+                </div>
+                <div
+                  *ngIf="numeroCreditoControl?.invalid && (numeroCreditoControl?.dirty || numeroCreditoControl?.touched)"
+                  class="mt-1">
+                  <small class="text-danger">
+                    <i class="bi bi-exclamation-circle me-1"></i>
+                    <span *ngIf="numeroCreditoControl?.errors?.['required']">
+                      Número do crédito é obrigatório
+                    </span>
+                    <span *ngIf="numeroCreditoControl?.errors?.['minlength']">
+                      Mínimo de {{ numeroCreditoControl?.errors?.['minlength']?.requiredLength }} caracteres
+                    </span>
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-md-4 col-lg-3">
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary btn-lg shadow"
+                    [disabled]="isLoading || consultaForm.invalid">
+                    <i class="bi bi-search me-2" *ngIf="!isLoading"></i>
+                    <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                    {{ isLoading ? 'Consultando...' : 'Consultar' }}
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary btn-lg" (click)="limpar()">
+                    <i class="bi bi-eraser me-2"></i>Limpar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <div *ngIf="isLoading" class="text-center py-5">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+              <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-3 text-muted">Buscando informações na API...</p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage && !isLoading" class="card shadow-lg border-danger mt-4">
+        <div class="card-header bg-danger-gradient text-white py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <h3 class="h5 mb-0">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>Erro na Consulta
+            </h3>
+           
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">
+              <i class="bi bi-x-circle-fill me-2"></i>{{ errorMessage }}
+            </h4>
+            <hr>
+
+            <div *ngIf="errorDetails">
+              <button class="btn btn-link p-0 mb-2" type="button" data-bs-toggle="collapse"
+                data-bs-target="#errorDetails" aria-expanded="false" aria-controls="errorDetails">
+                <i class="bi bi-chevron-down me-1"></i>Ver detalhes técnicos
+              </button>
+
+              <div class="collapse mt-2" id="errorDetails">
+                <div class="card card-body bg-light">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <strong>Código do Erro:</strong> {{ errorDetails.status }}<br>
+                      <strong>Status:</strong> {{ errorDetails.statusText }}<br>
+                      <strong>Data/Hora:</strong> {{ errorDetails.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}
+                    </div>
+                    <div class="col-md-6">
+                      <strong>URL:</strong> <small class="text-muted">{{ errorDetails.url }}</small><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="mb-0 mt-3">
+              <button class="btn btn-outline-danger me-2" (click)="consultar()">
+                <i class="bi bi-arrow-repeat me-1"></i>Tentar Novamente
+              </button>
+              <button class="btn btn-outline-secondary" (click)="limpar()">
+                <i class="bi bi-x-circle me-1"></i>Nova Consulta
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="creditos.length > 0 && !isLoading" class="card shadow-lg border-0 mt-4">
+        <div class="card-header bg-success-gradient text-white py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <h3 class="h5 mb-0">
+              <i class="bi bi-table me-2"></i>Resultados da Consulta
+            </h3>
+            <span class="badge bg-light text-success fs-6">
+              {{ creditos.length }} crédito(s) encontrado(s)
+            </span>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" class="ps-4"># Crédito</th>
+                  <th scope="col">NFS-e</th>
+                  <th scope="col">Constituição</th>
+                  <th scope="col">Valor ISSQN</th>
+                  <th scope="col">Tipo Crédito</th>
+                  <th scope="col">Simples Nacional</th>
+                  <th scope="col">Alíquota</th>
+                  <th scope="col">Valor Faturado</th>
+                  <th scope="col">Valor Dedução</th>
+                  <th scope="col">Base Cálculo</th>
+                  <th scope="col" class="text-end pe-4">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let credito of creditos; let i = index" [class.table-primary]="i % 2 === 0">
+                  <td class="ps-4 fw-bold">{{ credito.numeroCredito || '-' }}</td>
+                  <td>{{ credito.numeroNfse || '-' }}</td>
+                  <td>{{ formatarData(credito.dataConstituicao) }}</td>
+                  <td class="fw-bold text-success">{{ formatarMoeda(credito.valorIssqn) }}</td>
+                  <td>{{ credito.tipoCredito || '-' }}</td>
+                  <td>
+                    <span [class]="'badge ' + getStatusClass(credito.simplesNacional)" class="px-3 py-2">
+                      {{ credito.simplesNacional || 'N/A' }}
+                    </span>
+                  </td>
+                  <td class="fw-bold text-success">{{ formatarMoeda(credito.aliquota) }}</td>
+                  <td class="fw-bold text-success">{{ formatarMoeda(credito.valorFaturado) }}</td>
+                  <td class="fw-bold text-success">{{ formatarMoeda(credito.valorDeducao) }}</td>
+                  <td class="fw-bold text-success">{{ formatarMoeda(credito.baseCalculo) }}</td>
+                  <td class="text-end pe-4">
+                    <button class="btn btn-sm btn-outline-info me-2" title="Detalhes">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="creditoDetalhado && !isLoading" class="card shadow-lg border-0 mt-4">
+        <div class="card-header bg-info-gradient text-white py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <h3 class="h5 mb-0">
+              <i class="bi bi-info-circle me-2"></i>Detalhes do Crédito
+            </h3>
+            <span class="badge bg-light text-info fs-6">
+              {{ creditoDetalhado.numeroCredito }}
+            </span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12 mb-4">
+              <h5 class="border-bottom pb-2 mb-3 text-primary">
+                <i class="bi bi-card-checklist me-2"></i>Informações do Crédito
+              </h5>
+              <div class="list-group list-group-flush">
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Número do Crédito:</span>
+                  <span class="badge bg-primary">{{ creditoDetalhado.numeroCredito }}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Número NFS-e:</span>
+                  <span>{{ creditoDetalhado.numeroNfse }}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Data Constituicao:</span>
+                  <span>{{ formatarData(creditoDetalhado.dataConstituicao) }}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Valor Issqn:</span>
+                  <span class="fs-5 fw-bold text-success">{{ formatarMoeda(creditoDetalhado.valorIssqn) }}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Tipo Crédito:</span>
+                  <span>{{ creditoDetalhado.tipoCredito }}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Simples Nacional:</span>
+                  <span [class]="'badge ' + getStatusClass(creditoDetalhado.simplesNacional)" class="px-3 py-2">
+                    {{ creditoDetalhado.simplesNacional }}
+                  </span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Aliquota:</span>
+                  <span class="fs-5 fw-bold text-success">{{ formatarMoeda(creditoDetalhado.aliquota) }}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Valor Faturado:</span>
+                  <span class="fs-5 fw-bold text-success">{{ formatarMoeda(creditoDetalhado.valorFaturado) }}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Valor Dedução:</span>
+                  <span class="fs-5 fw-bold text-success">{{ formatarMoeda(creditoDetalhado.valorDeducao) }}</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Base Cálculo:</span>
+                  <span class="fs-5 fw-bold text-success">{{ formatarMoeda(creditoDetalhado.baseCalculo) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-outline-secondary" (click)="limpar()">
+                  <i class="bi bi-x-circle me-2"></i>Nova Consulta
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -53,9 +53,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.internalServerError().body(response);
     }
 
-    /**
-     * Handle MethodArgumentNotValidException - returns 400 BAD REQUEST
-     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<GlobalErrorResponse> handleValidationExceptions(
@@ -80,9 +77,6 @@ public class GlobalExceptionHandler {
     }
 
 
-    /**
-     * Handle MethodArgumentTypeMismatchException - returns 400 BAD REQUEST
-     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<GlobalErrorResponse> handleMethodArgumentTypeMismatch(
@@ -103,9 +97,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
-    /**
-     * Handle generic Exception - returns 500 INTERNAL SERVER ERROR
-     */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<GlobalErrorResponse> handleGenericException(

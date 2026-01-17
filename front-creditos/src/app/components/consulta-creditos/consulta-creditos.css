@@ -1,0 +1,76 @@
+
+.bg-primary-gradient {
+  background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+}
+
+.bg-success-gradient {
+  background: linear-gradient(135deg, #198754 0%, #157347 100%);
+}
+
+.bg-info-gradient {
+  background: linear-gradient(135deg, #0dcaf0 0%, #0ba4d1 100%);
+}
+
+.bg-danger-gradient {
+  background: linear-gradient(135deg, #dc3545 0%, #bb2d3b 100%);
+}
+
+.error-details {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.85rem;
+  background-color: #f8f9fa;
+  border-left: 4px solid #dc3545;
+}
+
+.spinner-border {
+  animation-duration: 0.8s;
+}
+
+.table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+.debug-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.alert-danger {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem !important;
+  }
+  
+  .btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+  
+  .table-responsive {
+    font-size: 0.9rem;
+  }
+  
+  .error-details {
+    font-size: 0.75rem;
+  }
+}
