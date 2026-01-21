@@ -1,14 +1,13 @@
 package com.andrecs2.credito_guide.application.ports.service;
 
+import java.util.List;
 import java.util.Optional;
-
-import org.springframework.data.domain.Page;
 
 import com.andrecs2.credito_guide.infra.response.CreditoResponse;
 
 public interface CreditoServiceAdapter {
 
-	Page<CreditoResponse> findByNumeroNfse(String numeroNfse);
+	List<CreditoResponse> findByNumeroNfse(String numeroNfse);
 
 	Optional<CreditoResponse> findByNumeroCredito(String numeroCredito);
 

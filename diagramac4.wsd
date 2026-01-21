@@ -5,16 +5,12 @@
 !define DEVICONS2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/main/icons/devicons2
 
 !include DEVICONS/java.puml
-!include DEVICONS/postgresql.puml
+!include DEVICONS/mysql.puml
 !include DEVICONS/nodejs.puml
 !include DEVICONS/angular.puml
-!include DEVICONS/react.puml
 !include DEVICONS2/apachekafka_original.puml
-' !include DEVICONS/prometheus.puml
-!include DEVICONS2/grafana.puml
 !includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-LAYOUT_WITH_LEGEND()
 
 Person(usuario, "Usuario", "Usuário")
 
@@ -23,8 +19,8 @@ Person(usuario, "Usuario", "Usuário")
 
 System_Boundary(contaantiga, "Conjunto") {
     Container_Ext(backend_app, "Backend REST ", "Spring Boot (Java)", $sprite="java" ,"API REST ")#Green
-    ContainerDb(bd_pg, "Banco de dados", "PostegreSQL", "Dados de créditos", $sprite="postgresql")#Green
-    ContainerQueue(broker, "Publisherr", "Kafka", "Notificação para auditoria",$sprite="apachekafka_original") #Red
+    ContainerDb(bd_pg, "Banco de dados", "MariaDB", "Dados de créditos", $sprite="mysql")#Green
+    ContainerQueue(broker, "Publisher", "Kafka", "Notificação para auditoria",$sprite="apachekafka_original") #Red
     Container(front_app, "Frontend", $sprite="angular", "Consutla créditos") #Green
 }
 
@@ -38,21 +34,9 @@ BiRel(front_app, backend_app, "Chama APIs", "HTTPS/JSON")
 
 
 
-Rel_R(backend_app, broker, "Consome eventos (Pagamento/Pedido)", "Async")
-BiRel_L(backend_app, bd_pg, "r/w (Transações)")
+Rel_R(backend_app, broker, "Notifica consultas", "Async")
+BiRel_L(backend_app, bd_pg, "read")
 
-
-
-
-
-
-
-legend
-<color:#FF0000>Últimas Alterações:</color>
-* **<color:#FF0000>Autorização no Keycloak</color> Adicionada** para todas as APIs de negócio.
-* **<color:#FF0000>Ligação do `accountApi`</color>** com o `accountApiDb` corrigida.
-end legend
-SHOW_LEGEND()
 
 
 @enduml

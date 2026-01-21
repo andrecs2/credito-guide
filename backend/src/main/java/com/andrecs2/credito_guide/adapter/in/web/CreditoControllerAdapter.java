@@ -1,8 +1,9 @@
 package com.andrecs2.credito_guide.adapter.in.web;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,11 +32,11 @@ public class CreditoControllerAdapter {
 
     @GetMapping(value = "/{numeroNfse}", produces = "application/json")
     @Operation(summary = "Consultar créditos por número da NFS-e")
-    public ResponseEntity<Page<CreditoResponse>> consultarPorNfse(
+    public ResponseEntity<List<CreditoResponse>> consultarPorNfse(
             @Parameter(description = "Número da NFS-e", required = true, example = "7891011")
             @PathVariable String numeroNfse) {
 
-        Page<CreditoResponse> creditos = adapter.findByNumeroNfse(numeroNfse);
+    	List<CreditoResponse> creditos = adapter.findByNumeroNfse(numeroNfse);
  
         return ResponseEntity.ok(creditos);
     }

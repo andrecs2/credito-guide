@@ -1,9 +1,9 @@
 package com.andrecs2.credito_guide.application.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.andrecs2.credito_guide.application.ports.repository.CreditoRepositoryAdapter;
@@ -17,7 +17,7 @@ public class CreditoService implements CreditoServiceAdapter {
 	private CreditoRepositoryAdapter repositoryAdapter;
 
 	@Override
-	public Page<CreditoResponse> findByNumeroNfse(String numeroNfse) {
+	public List<CreditoResponse> findByNumeroNfse(String numeroNfse) {
 
 		return repositoryAdapter.findByNumeroNfse(numeroNfse);
 

@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,8 +20,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -40,11 +40,7 @@ class CreditoControllerAdapterTest {
 
     @MockBean
     private CreditoRepositoryAdapter adapter;
-    
 
-    /* =========================
-       consultarPorNfse
-       ========================= */
 
     @Test
     @DisplayName("Deve retornar 200 e lista de créditos quando NFS-e existir")
@@ -57,8 +53,11 @@ class CreditoControllerAdapterTest {
               .valorFaturado(new BigDecimal("150.00").doubleValue()).build()
         ;
 
-        Page<CreditoResponse> page = new PageImpl<>(List.of(response));
-
+		List<CreditoResponse> page = new ArrayList<CreditoResponse>() {
+			{
+				add(response);
+			}
+		};
         when(adapter.findByNumeroNfse(nfse)).thenReturn(page);
 
         mockMvc.perform(get("/api/creditos/{nfse}", nfse)
@@ -75,7 +74,7 @@ class CreditoControllerAdapterTest {
     void deveRetornar404QuandoNfseNaoEncontrada() throws Exception {
         String nfse = "000000";
 
-        when(adapter.findByNumeroNfse(nfse)).thenReturn(Page.empty());
+        when(adapter.findByNumeroNfse(nfse)).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/creditos/{nfse}", nfse)
                         .accept(MediaType.APPLICATION_JSON))

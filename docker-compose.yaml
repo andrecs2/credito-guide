@@ -9,6 +9,8 @@ services:
       MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
     ports:
       - "${DB_PORT}:3306"
+    networks:
+      - credito-network
     volumes:
       - mariadb_data_credito:/var/lib/mysql
     command: 
@@ -20,8 +22,27 @@ services:
     restart: always
     ports:
       - "${ADMINER_PORT}:8080"
+    networks:
+      - credito-network
     depends_on:
       - mariadb
+  credito-guide-backend:
+    build: ./backend
+    container_name: credito-guide-backend
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    networks:
+      - credito-network
+    environment:
+      APP_ENVIRONMENT: ${ENVIRONMENT:-production}
+      JAVA_OPTS: "-Xmx512m -Xms256m"
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+networks:
+  credito-network:
+    driver: bridge
 volumes:
   mariadb_data_credito:
     driver: local
