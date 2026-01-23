@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "kafka.topic.consulta",
+  "type": "java.lang.String",
+  "description": "A description for 'kafka.topic.consulta'"
+}]}

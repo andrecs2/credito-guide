@@ -1,6 +1,8 @@
+
+
 CREATE TABLE credito(
     id_credito BIGINT NOT NULL AUTO_INCREMENT
-    ,numero_credito VARCHAR(50) NOT NULL
+    ,numero_credito VARCHAR(50) NOT NULL UNIQUE
     ,numero_nfse VARCHAR(50) NOT NULL
     ,data_constituicao DATE NOT NULL
     ,valor_issqn  DECIMAL(15, 2) NOT NULL

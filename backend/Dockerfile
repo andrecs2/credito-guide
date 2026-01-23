@@ -1,20 +1,20 @@
-# Etapa de build
 FROM maven:3.8.7-eclipse-temurin-17 AS build
 
-# Define o diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos do projeto
+ARG M2_HOME_ARG
+
 COPY pom.xml .
+
+# RUN --mount=type=cache,target=/root/.m2 \
+#     mvn dependency:go-offline
+
 COPY src ./src
 
-# Baixa as dependências e faz o build
-RUN mvn clean package -DskipTests
+RUN  mvn clean package -DskipTests
 
-# Etapa de execução
 FROM eclipse-temurin:17-jre-alpine
 
-# Cria um usuário não-root para segurança
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 

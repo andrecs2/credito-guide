@@ -29,3 +29,6 @@ target/
 .settings/
 .classpath
 .env
+.vscode/launch.json
+.vscode/settings.json
+.vscode/tasks.json

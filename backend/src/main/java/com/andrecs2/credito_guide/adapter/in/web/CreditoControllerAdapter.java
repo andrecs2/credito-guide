@@ -30,23 +30,23 @@ public class CreditoControllerAdapter {
 	private CreditoServiceAdapter adapter;
 
 
-    @GetMapping(value = "/{numeroNfse}", produces = "application/json")
-    @Operation(summary = "Consultar créditos por número da NFS-e")
-    public ResponseEntity<List<CreditoResponse>> consultarPorNfse(
-            @Parameter(description = "Número da NFS-e", required = true, example = "7891011")
-            @PathVariable String numeroNfse) {
+	@GetMapping(value = "/{numeroNfse}", produces = "application/json")
+	@Operation(summary = "Consultar créditos por número da NFS-e")
+	public ResponseEntity<List<CreditoResponse>> consultarPorNfse(
+			@Parameter(description = "Número da NFS-e", required = true, example = "7891011")
+			@PathVariable String numeroNfse) {
 
-    	List<CreditoResponse> creditos = adapter.findByNumeroNfse(numeroNfse);
- 
-        return ResponseEntity.ok(creditos);
-    }
+		List<CreditoResponse> creditos = adapter.findByNumeroNfse(numeroNfse);
+		
+		return ResponseEntity.ok(creditos);
+	}
 
-    @GetMapping(value = "/credito/{numeroCredito}", produces = "application/json")
-    @Operation(summary = "Consultar crédito por número do crédito")
-    public ResponseEntity<CreditoResponse> consultarPorNumeroCredito(
-            @Parameter(description = "Número do crédito", required = true) @PathVariable String numeroCredito) {
-    	 return adapter.findByNumeroCredito(numeroCredito)
-                 .map(ResponseEntity::ok)
-                 .orElse(ResponseEntity.notFound().build());
-    }
+	@GetMapping(value = "/credito/{numeroCredito}", produces = "application/json")
+	@Operation(summary = "Consultar crédito por número do crédito")
+	public ResponseEntity<CreditoResponse> consultarPorNumeroCredito(
+			@Parameter(description = "Número do crédito", required = true) @PathVariable String numeroCredito) {
+		return adapter.findByNumeroCredito(numeroCredito)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
 }

@@ -18,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 
 import com.andrecs2.credito_guide.application.ports.repository.CreditoRepositoryAdapter;
 import com.andrecs2.credito_guide.application.service.CreditoService;

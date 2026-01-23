@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "config": "node generate-config.js",
-    "start": "npm run config && ng serve",
+    "config": "node generate-config.js || echo 'Continuing without config generation'",
+    "start": "npm run config && ng serve  --host 0.0.0.0  --port $FRONTEND_PORT --allowed-hosts=all",
     "build": "npm run config && ng build",
     "watch": "npm run config && ng build --watch --configuration development",
     "test": "ng test"

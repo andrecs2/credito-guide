@@ -47,6 +47,12 @@
                 }
               ],
               "outputHashing": "all"
+              ,"fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,
@@ -56,17 +62,33 @@
           },
           "defaultConfiguration": "production"
         },
+            "docker": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.docker.ts"
+                }
+              ]
+            },
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
-            "production": {
+            "docker": {
+              "browserTarget": "front-creditos:build:docker"
+            },"production": {
               "buildTarget": "front-creditos:build:production"
             },
             "development": {
               "buildTarget": "front-creditos:build:development",
                     "proxyConfig": "proxy.conf.js"
 
-            }
+            },
+            "options": {
+              "host": "0.0.0.0",
+              "port": 4200,
+              "poll": 2000,
+              "proxyConfig": "proxy.conf.json"
+          }
           },
           "defaultConfiguration": "development"
         },

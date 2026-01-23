@@ -14,29 +14,23 @@
 
 Person(usuario, "Usuario", "Usuário")
 
-
-
-
 System_Boundary(contaantiga, "Conjunto") {
     Container_Ext(backend_app, "Backend REST ", "Spring Boot (Java)", $sprite="java" ,"API REST ")#Green
-    ContainerDb(bd_pg, "Banco de dados", "MariaDB", "Dados de créditos", $sprite="mysql")#Green
+    ContainerDb(mariadb, "Banco de dados", "MariaDB", "Dados de créditos", $sprite="mysql")#Green
     ContainerQueue(broker, "Publisher", "Kafka", "Notificação para auditoria",$sprite="apachekafka_original") #Red
-    Container(front_app, "Frontend", $sprite="angular", "Consutla créditos") #Green
+    Container(front_app, "Frontend", $sprite="angular", "Consulta créditos") #Green
+    Container(adminer, "Adminer", $sprite="", "Visualizador do banco de dados") #Green
+    Container(kafka_logger, "Kafka Logger", $sprite="", "Logger do kafka") #Green
 }
-
-
-
 
 BiRel(usuario, front_app, "Usa", "")
 
 BiRel(front_app, backend_app, "Chama APIs", "HTTPS/JSON")
 
 
-
-
-Rel_R(backend_app, broker, "Notifica consultas", "Async")
-BiRel_L(backend_app, bd_pg, "read")
-
-
+BiRel_D(kafka_logger, broker, "Notifica consultas", "Async")
+Rel_R(backend_app, broker, "Lê topicos", "Async")
+BiRel_L(backend_app, mariadb, "read")
+BiRel_D(adminer, mariadb, "read")
 
 @enduml

@@ -1,3 +1,4 @@
 {
     "BACKEND_URL": "http://${BACKEND_HOST}:${BACKEND_PORT}"
+    ,"FRONTEND_PORT":"${FRONTEND_PORT}"
 }
