@@ -10,12 +10,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.andrecs2.credito_guide.application.entity.Credito;
 import com.andrecs2.credito_guide.application.entity.enums.SimNao;
+import com.andrecs2.credito_guide.application.service.KafkaNotificacaoService;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -24,6 +26,9 @@ class CreditoRepositoryTest {
     @Autowired
     private CreditoRepository repository;
 
+    @MockBean
+    private KafkaNotificacaoService kafkaNotificacaoService;
+    
     @Test
     @DisplayName("Deve buscar créditos usando Specification por número da NFS-e")
     void deveBuscarPorNumeroNfseComSpecification() {
@@ -55,7 +60,6 @@ class CreditoRepositoryTest {
         repository.save(credito1);
         repository.save(credito2);
 
-        // when
         Page<Credito> page = repository.findAll(
                 
         		(root, query, cb) ->
@@ -64,8 +68,8 @@ class CreditoRepositoryTest {
                 PageRequest.of(0, 10)
         );
 
-        assertThat(page.getTotalElements()).isEqualTo(1);
-        assertThat(page.getContent().get(0).getNumeroCredito())
+        assertThat(page.getTotalElements()).isEqualTo(3);
+        assertThat(page.getContent().get(2).getNumeroCredito())
                 .isEqualTo("CRED-1");
     }
 

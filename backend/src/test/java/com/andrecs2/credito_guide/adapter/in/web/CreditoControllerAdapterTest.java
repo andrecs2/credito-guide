@@ -12,6 +12,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +23,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.andrecs2.credito_guide.application.ports.repository.CreditoRepositoryAdapter;
+import com.andrecs2.credito_guide.application.service.KafkaNotificacaoService;
 import com.andrecs2.credito_guide.infra.response.CreditoResponse;
 
-@WebMvcTest(controllers = CreditoControllerAdapter.class, excludeAutoConfiguration = {
-        org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration.class,
-        org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class,
-        org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class
-    })
+@WebMvcTest(controllers = CreditoControllerAdapter.class)
 @AutoConfigureMockMvc(addFilters = false)
 @Import(JacksonAutoConfiguration.class)
+@ActiveProfiles("test")
 class CreditoControllerAdapterTest {
 
     @Autowired
@@ -41,7 +43,14 @@ class CreditoControllerAdapterTest {
     @MockBean
     private CreditoRepositoryAdapter adapter;
 
+    @MockBean
+    private KafkaNotificacaoService kafkaNotificacaoService;
 
+    @MockBean
+    private DataSource dataSource;
+    
+    @MockBean
+    private JdbcTemplate jdbcTemplate;
     @Test
     @DisplayName("Deve retornar 200 e lista de créditos quando NFS-e existir")
     void deveRetornarCreditosPorNfse() throws Exception {
@@ -64,9 +73,9 @@ class CreditoControllerAdapterTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.content[0].numeroCredito").value("123456"))
-                .andExpect(jsonPath("$.content[0].numeroNfse").value(nfse))
-                .andExpect(jsonPath("$.content[0].valorFaturado").value(150.00));
+                .andExpect(jsonPath("$.[0].numeroCredito").value("123456"))
+                .andExpect(jsonPath("$.[0].numeroNfse").value(nfse))
+                .andExpect(jsonPath("$.[0].valorFaturado").value(150.00));
     }
 
     @Test
@@ -78,7 +87,8 @@ class CreditoControllerAdapterTest {
 
         mockMvc.perform(get("/api/creditos/{nfse}", nfse)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.totalElements").value(0));
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$.length()").value(0));
     }
 
 

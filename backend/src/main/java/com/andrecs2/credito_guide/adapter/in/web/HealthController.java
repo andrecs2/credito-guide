@@ -134,7 +134,7 @@ public class HealthController {
             db.put("type", conn.getMetaData().getDatabaseProductName());
             db.put("version", conn.getMetaData().getDatabaseProductVersion());
             db.put("responseTime", responseTime + "ms");
-            db.put("test", "SELECT 1 executado com sucesso");
+            db.put("test", "SELECT 1 executado "+(result?"com":"sem")+" sucesso");
             
             logger.debug("Health check DB: UP ({}ms)", responseTime);
             
